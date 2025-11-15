@@ -7,7 +7,7 @@ utilizando modelos de Machine Learning e LLM para identificar:
 
 -   Se o e-mail é **Produtivo** ou **Improdutivo**
 -   O **tema principal** da mensagem
--   Uma **resposta automática profissional** gerada pelo modelo
+-   Uma **resposta automática adequada** gerada pelo modelo
 
 Inclui:
 
@@ -109,7 +109,8 @@ Plataformas suportadas:
 -   Railway\
 -   Hugging Face Spaces\
 -   Azure / AWS / GCP\
--   Replit
+-   Replit\
+-   Heroku
 
 Comando recomendado:
 
