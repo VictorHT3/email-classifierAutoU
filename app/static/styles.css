@@ -1,0 +1,179 @@
+/* ============================
+   Reset & Base
+============================ */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Inter", Arial, sans-serif;
+}
+
+body {
+    background: #f4f6f8;
+    color: #333;
+    padding: 40px 0;
+}
+
+/* ============================
+   Container principal
+============================ */
+.container {
+    width: 90%;
+    max-width: 860px;
+    margin: 0 auto;
+    background: white;
+    padding: 32px;
+    border-radius: 14px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+}
+
+/* ============================
+   Títulos
+============================ */
+h1 {
+    font-size: 28px;
+    text-align: center;
+    margin-bottom: 12px;
+}
+
+.subtitle {
+    text-align: center;
+    font-size: 16px;
+    color: #666;
+    margin-bottom: 26px;
+}
+
+/* ============================
+   Formulário
+============================ */
+form label {
+    font-weight: 600;
+    display: block;
+    margin-bottom: 6px;
+    margin-top: 18px;
+}
+
+textarea {
+    width: 100%;
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    font-size: 15px;
+    resize: vertical;
+    min-height: 140px;
+    transition: all .2s;
+}
+
+textarea:focus {
+    border-color: #4a8af4;
+    box-shadow: 0 0 0 3px rgba(74,138,244,0.25);
+    outline: none;
+}
+
+input[type="file"] {
+    display: block;
+    margin-top: 8px;
+    font-size: 15px;
+}
+
+.or {
+    text-align: center;
+    color: #777;
+    margin: 16px 0;
+}
+
+/* ============================
+   Botão
+============================ */
+button {
+    display: block;
+    width: 100%;
+    margin-top: 22px;
+    padding: 14px;
+    background: #4a8af4;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-size: 17px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+button:hover {
+    background: #3b73d4;
+}
+
+/* ============================
+   Área de resultado
+============================ */
+.result {
+    margin-top: 32px;
+    padding: 24px;
+    background: #fafafa;
+    border-radius: 12px;
+    border: 1px solid #e3e3e3;
+}
+
+/* ============================
+   Badges
+============================ */
+.badge {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.badge.produtivo {
+    background: #d4f8d4;
+    color: #0f7a0f;
+}
+
+.badge.improdutivo {
+    background: #ffd8d8;
+    color: #b30000;
+}
+
+.badge.categoria {
+    background: #d9e6ff;
+    color: #1a3f8b;
+}
+
+/* ============================
+   Caixa da resposta sugerida
+============================ */
+.reply {
+    background: white;
+    padding: 14px;
+    border-left: 4px solid #4a8af4;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    font-size: 15px;
+}
+
+/* ============================
+   Texto original
+============================ */
+pre {
+    background: #f2f2f2;
+    padding: 14px;
+    border-radius: 8px;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    font-size: 14px;
+}
+
+/* ============================
+   Erro
+============================ */
+.error {
+    margin-top: 18px;
+    padding: 12px;
+    background: #ffe0e0;
+    border-left: 4px solid #cc0000;
+    border-radius: 6px;
+    color: #660000;
+    font-weight: 600;
+}
