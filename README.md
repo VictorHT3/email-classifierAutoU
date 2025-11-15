@@ -1,147 +1,132 @@
-📧 Email Classifier — Classificação Inteligente de E-mails
+# 📧 Email Classifier --- Classificação Inteligente de E-mails
 
-Aplicação completa para classificação automática de e-mails utilizando:
+Aplicação completa para **classificação automática de e-mails**,
+utilizando modelos de Machine Learning e LLM para identificar:
 
-Modelo local (Machine Learning — TF-IDF + Regressão Logística)
+-   Se o e-mail é **Produtivo** ou **Improdutivo**
+-   O **tema principal** da mensagem
+-   Uma **resposta automática profissional** gerada pelo modelo
 
-Integração com OpenAI GPT-4o-mini para classificação temática e geração de resposta automática
+Inclui:
 
-Backend em FastAPI
+-   Modelo local (TF-IDF + Regressão Logística)
+-   Integração com OpenAI `gpt-4o-mini` para classificação temática
+    avançada
+-   Backend em **FastAPI**
+-   Interface web em **HTML**
+-   Suporte a upload de **texto** e **PDF**
 
-Interface web simples em HTML
+## 📁 Estrutura do Projeto
 
-Suporte a upload de texto e PDF
+    project/
+    │
+    ├── app/
+    │   ├── main.py                 # Backend FastAPI
+    │   ├── model_utils.py          # Modelo local + LLM
+    │   ├── nlp_utils.py            # Limpeza e pré-processamento
+    │   ├── model/
+    │   │   └── classifier.pkl      # Modelo local treinado
+    │   ├── templates/
+    │   │   └── index.html          # Interface web
+    │   └── static/
+    │       └── styles.css          # Estilos
+    │
+    ├── train/
+    │   ├── train_model.py          # Treinamento do modelo local
+    │   └── sample_data.csv         # Dataset de treino
+    │
+    ├── requirements.txt
+    └── README.md
 
-O objetivo é identificar se um e-mail é Produtivo ou Improdutivo, classificar o tema principal e gerar uma resposta automática profissional.
+## 🚀 Como Rodar Localmente
 
-📁 Estrutura do Projeto
-project/
-│
-├── app/
-│   ├── main.py                 # Backend FastAPI
-│   ├── model_utils.py          # Modelo local + LLM
-│   ├── nlp_utils.py            # Limpeza e pré-processamento
-│   ├── model/
-│   │   └── classifier.pkl      # Modelo local treinado
-│   ├── templates/
-│   │   └── index.html          # Interface web
-│   └── static/
-│       └── styles.css          # Estilos
-│
-├── train/
-│   ├── train_model.py          # Treinamento do modelo local
-│   └── sample_data.csv         # Dataset de treino
-│
-├── requirements.txt
-└── README.md
+### **1. Instale as dependências**
 
-🚀 Como Rodar Localmente
-1. Instale as dependências
+``` bash
 pip install -r requirements.txt
+```
 
-2. Adicione sua chave OpenAI
+### **2. Adicione sua chave OpenAI**
 
-Crie um arquivo .env na raiz:
+Crie um arquivo `.env` na raiz:
 
-OPENAI_API_KEY=sua_chave_aqui
+    OPENAI_API_KEY=sua_chave_aqui
 
-3. (Opcional) Treine o modelo local
+### **3. (Opcional) Treine o modelo local**
+
+``` bash
 python train/train_model.py
+```
 
+### **4. Inicie a aplicação**
 
-Isso gera:
-
-app/model/classifier.pkl
-
-4. Inicie a aplicação
+``` bash
 uvicorn app.main:app --reload
+```
 
+Acesse no navegador:\
+👉 **http://localhost:8000/**
 
-Acesse no navegador:
+## 🧠 Funcionamento Técnico
 
-👉 http://localhost:8000/
+### 🔹 Pré-processamento (nlp_utils.py)
 
-🧠 Funcionamento Técnico
-🔹 Pré-processamento (nlp_utils.py)
+-   Limpeza de texto\
+-   Remoção de URLs, números, e-mails e stopwords\
+-   Tokenização\
+-   Stemming (`SnowballStemmer` --- PT-BR)
 
-Limpeza de texto (URLs, números, stopwords, emails)
+### 🔹 Classificação Local (Machine Learning)
 
-Tokenização
+-   TF-IDF\
+-   Regressão Logística\
+-   Pipeline em `train/train_model.py`
 
-Stemming (SnowballStemmer — PT-BR)
+### 🔹 Classificação via LLM (OpenAI)
 
-Preparação para o modelo local
+Retorno esperado:
 
-🔹 Classificação Local (Machine Learning)
+    categoria: <CATEGORIA> | confianca: <1-10>
 
-Usa:
+### 🔹 Geração de Resposta Automática
 
-TF-IDF com stopwords do NLTK
+Criação de resposta profissional com base no texto + categoria
+detectada.
 
-Regressão Logística
+## 📄 Dataset de Exemplo
 
-Arquivo de treino: train_model.py
+    text,label
+    "Preciso de confirmação do relatório.",Produtivo
+    "Bom dia, feliz natal!",Improdutivo
 
-🔹 Classificação via LLM (OpenAI)
+## 🌐 Deploy
 
-O texto original é enviado para o modelo gpt-4o-mini, que retorna:
+Plataformas suportadas:
 
-categoria: <CATEGORIA> | confianca: <1-10>
-
-🔹 Geração de Resposta Automática
-
-O LLM também cria uma resposta profissional baseada no texto original e categoria detectada.
-
-📄 Dataset de Exemplo
-
-O arquivo sample_data.csv segue formato:
-
-text,label
-"Preciso de confirmação do relatório.",Produtivo
-"Bom dia, feliz natal!",Improdutivo
-
-
-Treine novamente usando:
-
-python train/train_model.py
-
-🌐 Deploy
-
-Pode ser hospedado em:
-
-Render
-
-Railway
-
-Hugging Face Spaces
-
-Azure / AWS / GCP
-
-Replit
+-   Render\
+-   Railway\
+-   Hugging Face Spaces\
+-   Azure / AWS / GCP\
+-   Replit
 
 Comando recomendado:
 
+``` bash
 uvicorn app.main:app --host 0.0.0.0 --port 80
+```
 
-🛠 Tecnologias
+## 🛠 Tecnologias
 
-Python 3.10+
+-   Python 3.10+
+-   FastAPI\
+-   scikit-learn\
+-   NLTK\
+-   pdfminer.six\
+-   OpenAI API\
+-   HTML + CSS
 
-FastAPI
+## 📬 Contato
 
-scikit-learn
-
-NLTK
-
-pdfminer.six
-
-OpenAI API
-
-HTML + CSS
-
-📬 Contato
-
-Desenvolvido por Victor Hugo Teixeira
-Email: mrvictor2409@gmail.com
-
-LinkedIn: https://www.linkedin.com/in/victorteixeira1b82b0161/
+Desenvolvido por **Victor Hugo Teixeira**\
+📧 Email: **mrvictor2409@gmail.com**\
+🔗 LinkedIn: **https://www.linkedin.com/in/victorteixeira1b82b0161/**
