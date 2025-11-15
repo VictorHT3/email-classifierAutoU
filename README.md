@@ -1,4 +1,4 @@
-# Classificação Inteligente de E-mails- Victor Teixeira
+# Classificador Inteligente de E-mails
 
 💻 URL da Aplicação: https://email-classifier-vht-ac7d44f07848.herokuapp.com/
 
