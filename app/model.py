@@ -3,137 +3,161 @@ import joblib
 from typing import Tuple
 from dotenv import load_dotenv
 
+# Carregar variáveis de ambiente
+# ==========================================
 load_dotenv()
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 
-# ================================
-# Load local model
-# ================================
+# Caminhos e carregamento do modelo local
+# ==========================================
+
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 MODEL_PATH = os.path.join(BASE_DIR, "model", "classifier.pkl")
 
-print("🔍 Tentando carregar modelo em:", MODEL_PATH)
+print(f"🔍 Tentando carregar modelo local em: {MODEL_PATH}")
 
 _local_model = None
-
 try:
     _local_model = joblib.load(MODEL_PATH)
-    print("Local model loaded:", MODEL_PATH)
+    print(f"✅ Modelo local carregado com sucesso.")
 except Exception as e:
-    print("Local model not loaded:", e)
+    print(f" Falha ao carregar modelo local: {e}")
 
-# ================================
-# OpenAI client (new API)
-# ================================
+# Cliente OpenAI (novo formato)
+# ==========================================
 _client = None
 if OPENAI_API_KEY:
     try:
         from openai import OpenAI
-        _client = OpenAI(api_key=OPENAI_API_KEY)
-    except Exception as e:
-        print("OpenAI client not available:", e)
 
-# ================================
-# Local model classification
-# ================================
+        _client = OpenAI(api_key=OPENAI_API_KEY)
+        print("🔑 Cliente OpenAI inicializado.")
+    except Exception as e:
+        print("Erro ao inicializar cliente OpenAI:", e)
+else:
+    print("⚠️ Nenhuma OPENAI_API_KEY encontrada.")
+
+
+# Função — Classificação com modelo local
+# ==========================================
 def classify_local(text: str) -> Tuple[str, float]:
+    """
+    Usa o modelo local (Logistic Regression + TF-IDF) para classificar o texto.
+    Retorna:
+        label (str): rótulo previsto
+        confidence (float): probabilidade entre 0 e 1
+    """
     if not _local_model:
         return None, 0.0
 
     try:
+        # predict_proba retorna um array de probabilidades
         proba = _local_model.predict_proba([text])[0]
         idx = proba.argmax()
+
         return _local_model.classes_[idx], float(proba[idx])
+
     except Exception as e:
-        print("classify_local error:", e)
+        print("Erro em classify_local:", e)
         return None, 0.0
 
-# ================================
-# LLM classification
-# ================================
+
+# Função — Classificação com LLM
+# ==========================================
 def classify_with_llm(text: str):
     """
-    Classifica o email usando GPT-4o-mini e retorna:
-    - categoria (str)
-    - confiança de 0 a 10 (float)
+    Classifica o texto usando GPT-4o-mini.
+    O LLM deve responder no formato:
+        categoria: <CATEGORIA> | confianca: <1-10>
+    Retorna:
+        categoria (str)
+        confianca (float)
     """
+
+    if not _client:
+        print("⚠️ LLM não disponível.")
+        return "LLM_INDISPONIVEL", 0.0
 
     try:
         resp = _client.chat.completions.create(
             model="gpt-4o-mini",
+            temperature=0,
             messages=[
                 {
                     "role": "system",
                     "content": (
-                        "Classifique o email em uma CATEGORIA ÚNICA. "
-                        "Responda SOMENTE no formato:\n"
-                        "categoria: <CATEGORIA> | confianca: <1-10>\n\n"
-                        "Exemplos de categorias: SUPORTE, COBRANÇA, PEDIDO, ELOGIO, SPAM, OUTROS."
+                        "Classifique o email em UMA ÚNICA categoria.\n"
+                        "Formato obrigatório da resposta:\n"
+                        "categoria: <CATEGORIA> | confianca: <1-10>\n"
+                        "Categorias sugeridas: SUPORTE, COBRANÇA, PEDIDO, "
+                        "ELOGIO, SPAM, OUTROS."
                     )
                 },
                 {"role": "user", "content": text}
             ],
-            temperature=0
         )
 
-        # Conteúdo retornado
-        content = resp.choices[0].message.content.strip()
-
-        # -------------------------------
-        # Normalização para parsing
-        # -------------------------------
-        content = content.replace("\n", " ").lower()
+        content = resp.choices[0].message.content.strip().lower()
+        content = content.replace("\n", " ")
 
         categoria = "UNKNOWN"
         confianca = 0.0
 
-        # -------------------------------
-        # Extrai categoria e confiança
-        # -------------------------------
+        # Processamento da string retornada
         if "|" in content:
-            partes = content.split("|")
+            categoria_raw, conf_raw = content.split("|")
 
-            # Categoria
-            if "categoria" in partes[0]:
-                categoria = partes[0].split(":")[1].strip().upper()
+            if "categoria" in categoria_raw:
+                categoria = categoria_raw.split(":")[1].strip().upper()
 
-            # Confiança
-            if "confianca" in partes[1]:
+            if "confianca" in conf_raw:
                 try:
-                    confianca = float(partes[1].split(":")[1].strip())
+                    confianca = float(conf_raw.split(":")[1].strip())
                 except:
                     confianca = 0.0
-
         else:
-            # fallback — modelo às vezes responde só com o nome da categoria
             categoria = content.upper()
 
         return categoria, confianca
 
     except Exception as e:
-        print("Erro no classify_with_llm:", e)
+        print(" Erro em classify_with_llm:", e)
         return "ERROR", 0.0
 
-# ================================
-# LLM Automatic Response Generator
-# ================================
+# Função — Gerador de Resposta Automática
+# ==========================================
 def generate_response_with_llm(original_text: str, label: str) -> str:
-    prompt = f"""
-    Você é um assistente que gera respostas profissionais para emails.
-    Categoria detectada: {label}
-    Texto original:
-    {original_text}
-
-    Gere uma resposta clara, educada e objetiva.
+    """
+    Gera uma resposta automática com base no texto original e na categoria prevista.
+    Retorna:
+        texto (str): resposta sugerida pelo LLM
     """
 
-    resp = _client.chat.completions.create(
-        model="gpt-4o-mini",
-        messages=[
-            {"role": "system", "content": "Você é um assistente especializado em responder emails."},
-            {"role": "user", "content": prompt}
-        ],
-        temperature=0.3
-    )
+    if not _client:
+        return "LLM não disponível para gerar resposta."
 
-    return resp.choices[0].message.content.strip()
+    prompt = f"""
+    Você é um assistente profissional que escreve emails claros e educados.
+    Categoria detectada: {label}
+
+    Texto original do usuário:
+    {original_text}
+
+    Gere uma resposta objetiva, educada e direta.
+    """
+
+    try:
+        resp = _client.chat.completions.create(
+            model="gpt-4o-mini",
+            temperature=0.3,
+            messages=[
+                {"role": "system", "content": "Você é um assistente especializado em responder emails."},
+                {"role": "user", "content": prompt}
+            ]
+        )
+
+        return resp.choices[0].message.content.strip()
+
+    except Exception as e:
+        print("Erro em generate_response_with_llm:", e)
+        return "Erro ao gerar resposta automática."
