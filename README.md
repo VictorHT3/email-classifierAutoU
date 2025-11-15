@@ -1,4 +1,4 @@
-# 📧 Email Classifier --- Classificação Inteligente de E-mails
+# 📧 Email Classifier --- Classificação Inteligente de E-mails- Victor Teixeira
 
 Aplicação completa para **classificação automática de e-mails**,
 utilizando modelos de Machine Learning e LLM para identificar:
