@@ -1,4 +1,6 @@
-# 📧 Email Classifier --- Classificação Inteligente de E-mails- Victor Teixeira
+# Classificação Inteligente de E-mails- Victor Teixeira
+
+💻 URL da Aplicação: https://email-classifier-vht-ac7d44f07848.herokuapp.com/
 
 Aplicação completa para **classificação automática de e-mails**,
 utilizando modelos de Machine Learning e LLM para identificar:
